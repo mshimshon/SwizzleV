@@ -5,6 +5,8 @@
 It enables seamless management of transient ViewModel instances with built-in duplication and memory leaks prevention. 
 SwizzleV combines the best of dependency injection, scoped lifetimes, and local component state without the common pitfalls of singletons.
 
+**SwizzleV is an essential for any clean architecture blazor based front-end**.
+
 ## Features
 
 - Transparent ViewModel caching with `WeakReference` to avoid redundant instances  
