@@ -42,13 +42,67 @@ Then you register your View Models as you usually do "Scoped"... except the isol
 When a component need to maintain a separate state from each other you dont have many choice you either give up the View Model pattern or you instantiate the class view model into the lifecycle of the component...
 but to me that is too much boiling plate when you work on large application so here how it is gonna go with SwizzleV.
 
-1. You register the ModelView as Transient for the isolated components not the pages.
+1. Create a register your view model as you can see perfect pairing to StatePulse.Net.
+```csharp
+internal class ArticleViewModel
+{
+    private readonly IDispatcher _dispatcher;
+    private readonly ISwizzleViewModel _swizzleViewModel;
+    private readonly ArticleViewState _state;
+
+    public bool IsLoading => _state.IsLoading;
+
+    public ArticleViewModel(IStatePulse pulsars, ISwizzleViewModel swizzleViewModel, IDispatcher dispatcher)
+    {
+        _dispatcher = dispatcher;
+        _swizzleViewModel = swizzleViewModel;
+        _state = pulsars.StateOf<ArticleViewState>(this, OnStateHasChanged);
+    }
+
+    public async Task LoadAsync(string id)
+    {
+        var action = new ArticleGetOneAction(id);
+        await _dispatcher.Prepare(() => action).DispatchAsync();
+    }
+
+    public Task OnStateHasChanged()
+    {
+        _swizzleViewModel.SpreadChanges(()=>this);
+        return Task.CompletedTask;
+    }
+}
+```
+```csharp
+services.AddTransient<ArticleViewModel>();
+// OR Scoped for non-reusable components like pages.
+services.AddScoped<ArticleViewModel>();
+```
+
+2. Create the components
+```
+@inherits ComponentBase
+@page "/article/{Id}"
+@if (_articleViewModel.IsLoading)
+{
+   <p>Loading...</p>
+}
+```
+
+
 
 ```csharp
-services.AddTransient<ComponentViewModel>();
-```
-2. Request is on the fly, you can call ```SwizzleFactory.GetViewModel<ComponentViewModel>(this);``` any where as many time safely... code below is for conviencien
-```csharp
-// Component.razor.cs
-[Inject] private ComponentViewModel ViewModel => SwizzleFactory.GetViewModel<ComponentViewModel>(this);
+// Article.razor.cs
+public partial class Article : ComponentBase
+{
+    [Parameter] public string Id { set; get; }
+    private ArticleViewModel _articleViewModel = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var articleVMHook = SwizzleFactory
+            .CreateOrGet<ArticleViewModel>(() => this, () => InvokeAsync(() => StateHasChanged()));
+        _articleViewModel = articleVMHook.GetViewModel<ArticleViewModel>()!;
+        await _articleViewModel.LoadAsync(Id);
+    }
+}
 ```
