@@ -51,7 +51,7 @@ internal class ArticleViewModel
     private readonly ArticleViewState _state;
 
     public bool IsLoading => _state.IsLoading;
-
+    public ArticleViewState State => _state;
     public ArticleViewModel(IStatePulse pulsars, ISwizzleViewModel swizzleViewModel, IDispatcher dispatcher)
     {
         _dispatcher = dispatcher;
