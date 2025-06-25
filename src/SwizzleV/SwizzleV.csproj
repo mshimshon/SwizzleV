@@ -5,6 +5,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Title>SwizzleV</Title>
+	  <AssemblyName>SwizzleV</AssemblyName>
+	  <RootNamespace>SwizzleV</RootNamespace>
     <Authors>Maksim Shimshon</Authors>
     <Company>Maksim Shimshon</Company>
     <Description>Lightweight Blazor ViewModel caching and factory library using weak references. Simplifies per-component ViewModel reuse with DI support and avoids singleton pitfalls.</Description>
@@ -13,8 +15,12 @@
     <RepositoryUrl>https://github.com/mshimshon/SwizzleV</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>c#, clean-architecture, dependency-injection, blazor, viewmodel, caching, factory, lightweight</PackageTags>
-    <Version>0.9.0</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageId>SwizzleV</PackageId>
+    <NeutralLanguage>en</NeutralLanguage>
+	  <Version>0.9.112</Version>
+	  <AssemblyVersion>0.9.112</AssemblyVersion>
+    <FileVersion>0.9.112</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,5 +33,11 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.6" />
   </ItemGroup>
-
+    <Target Name="CopyNuPkg" AfterTargets="Pack" Condition="'$(Configuration)' == 'Release'">
+	    <MakeDir Directories="..\..\..\..\nupkgs" />
+	    <ItemGroup>
+		    <PackageFiles Include="$(PackageOutputPath)$(PackageId).$(PackageVersion).nupkg" />
+	    </ItemGroup>
+	    <Copy SourceFiles="@(PackageFiles)" DestinationFolder="..\..\..\..\nupkgs" OverwriteReadOnlyFiles="true" SkipUnchangedFiles="false" />
+    </Target>
 </Project>

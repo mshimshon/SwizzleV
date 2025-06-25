@@ -1,5 +1,5 @@
 ﻿namespace SwizzleV;
 public interface ISwizzleFactory
 {
-    TViewModel GetViewModel<TViewModel>(object key) where TViewModel : class;
+    ISwizzleHook CreateOrGet<TViewModel>(Func<object> key, Func<Task> onUpdate) where TViewModel : class;
 }

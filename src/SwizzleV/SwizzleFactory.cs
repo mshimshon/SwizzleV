@@ -1,26 +1,73 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System.Runtime.CompilerServices;
+using SwizzleV.Internal;
+using System.Collections.Concurrent;
 
 namespace SwizzleV;
-internal class SwizzleFactory : ISwizzleFactory
+internal abstract class SwizzleFactory : ISwizzleFactory, ISwizzleViewModel
 {
     private readonly IServiceProvider _serviceProvider;
-    private readonly ConditionalWeakTable<object, object> _cache = new();
+    protected ConcurrentDictionary<SwizzleHook, bool> _cache = new();
 
-    public SwizzleFactory(IServiceProvider serviceProvider)
+    protected SwizzleFactory(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
     }
 
-    public TViewModel GetViewModel<TViewModel>(object key) where TViewModel : class
+    public virtual ISwizzleHook CreateOrGet<TViewModel>(Func<object> key, Func<Task> onUpdate) where TViewModel : class
     {
-        if (_cache.TryGetValue(key, out var existingVm))
-        {
-            return (TViewModel)existingVm;
-        }
-
+        var obj = key();
+        if (TryGetByCaller<TViewModel>(obj, out var existingHook))
+            return existingHook!;
         var vm = _serviceProvider.GetRequiredService<TViewModel>();
-        _cache.Add(key, vm);
-        return vm;
+        var hook = new SwizzleHook(key(), vm, onUpdate);
+        _cache.TryAdd(hook, true);
+        return hook;
+    }
+
+    public Task SpreadChanges(Func<object> viewModel)
+    {
+        var vmInput = viewModel();
+        foreach (var item in _cache.Keys)
+        {
+            bool hasInstance = item.Instance.TryGetTarget(out var _);
+            bool hasViewModel = item.ViewModel.TryGetTarget(out var vm);
+
+            if (!hasInstance || !hasViewModel)
+            {
+                _cache.TryRemove(item, out var _);
+                continue;
+            }
+            if (ReferenceEquals(vm, vmInput))
+            {
+                bool hasListener = item.Listener.TryGetTarget(out var listener);
+                if (hasListener) _ = listener?.Invoke();
+            }
+
+
+        }
+        return Task.CompletedTask;
+    }
+
+    public bool TryGetByCaller<TViewModel>(object value, out SwizzleHook? swizzleHook) where TViewModel : class
+    {
+        swizzleHook = default;
+        foreach (var item in _cache.Keys)
+        {
+
+            if (item.Instance.TryGetTarget(out var targetInstance) &&
+                item.ViewModel.TryGetTarget(out var targetVm))
+            {
+                if (ReferenceEquals(value, targetInstance) && targetVm.GetType() == typeof(TViewModel))
+                {
+                    swizzleHook = item;
+                    return true;
+                }
+            }
+            else
+            {
+                _cache.TryRemove(item, out var _);
+            }
+        }
+        return false;
     }
 }
