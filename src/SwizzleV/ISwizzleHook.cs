@@ -3,5 +3,5 @@ public interface ISwizzleHook
 {
     TParent? GetInstance<TParent>() where TParent : class;
     TViewModel? GetViewModel<TViewModel>() where TViewModel : class;
-    Func<Task>? GetListener { get; }
+    Func<object, Task> GetListener { get; }
 }

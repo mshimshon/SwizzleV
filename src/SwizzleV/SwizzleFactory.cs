@@ -3,12 +3,11 @@ using SwizzleV.Internal;
 using System.Collections.Concurrent;
 
 namespace SwizzleV;
-internal abstract class SwizzleFactory : ISwizzleFactory, ISwizzleViewModel
+internal class SwizzleFactory : ISwizzleFactory, ISwizzleViewModel
 {
     private readonly IServiceProvider _serviceProvider;
     protected ConcurrentDictionary<SwizzleHook, bool> _cache = new();
-
-    protected SwizzleFactory(IServiceProvider serviceProvider)
+    public SwizzleFactory(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
     }
@@ -29,7 +28,7 @@ internal abstract class SwizzleFactory : ISwizzleFactory, ISwizzleViewModel
         var vmInput = viewModel();
         foreach (var item in _cache.Keys)
         {
-            bool hasInstance = item.Instance.TryGetTarget(out var _);
+            bool hasInstance = item.Instance.TryGetTarget(out var target);
             bool hasViewModel = item.ViewModel.TryGetTarget(out var vm);
 
             if (!hasInstance || !hasViewModel)
@@ -39,11 +38,8 @@ internal abstract class SwizzleFactory : ISwizzleFactory, ISwizzleViewModel
             }
             if (ReferenceEquals(vm, vmInput))
             {
-                bool hasListener = item.Listener.TryGetTarget(out var listener);
-                if (hasListener) _ = listener?.Invoke();
+                item.GetListener(target!);
             }
-
-
         }
         return Task.CompletedTask;
     }
@@ -70,4 +66,5 @@ internal abstract class SwizzleFactory : ISwizzleFactory, ISwizzleViewModel
         }
         return false;
     }
+
 }
