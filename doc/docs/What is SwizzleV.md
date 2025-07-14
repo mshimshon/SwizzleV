@@ -1,5 +1,5 @@
 ---
-slug: gs-whatsswizzlev
+slug: /
 title: What's SwizzleV
 tags: [blazor, swizzlev, viewmodel-pattern, component-architecture, dependency-injection, scoped, transient, csharp, .net]
 sidebar_position: 1
