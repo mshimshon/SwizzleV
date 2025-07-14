@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+	<TargetFrameworks>net6.0;net8.0;netstandard2.1;netstandard2.0;</TargetFrameworks>
+	<LangVersion>10</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Title>SwizzleV</Title>
@@ -13,21 +14,36 @@
     <Copyright>Copyright © Maksim Shimshon</Copyright>
     <PackageProjectUrl>https://github.com/mshimshon/SwizzleV</PackageProjectUrl>
     <RepositoryUrl>https://github.com/mshimshon/SwizzleV</RepositoryUrl>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageReadmeFile>RELEASES.md</PackageReadmeFile>
     <PackageTags>c#, clean-architecture, dependency-injection, blazor, viewmodel, caching, factory, lightweight</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>SwizzleV</PackageId>
     <NeutralLanguage>en</NeutralLanguage>
-	<Version>0.9.120</Version>
+	<Version>0.9.6</Version>
     <PackageIcon>icon.png</PackageIcon>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
+	
+	<!-- For .NET 6 and .NET Standard, use version 7.x -->
+	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'netstandard2.1' Or '$(TargetFramework)' == 'netstandard2.0'">
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
+	</ItemGroup>
 
+	<!-- For .NET 8, use version 9.x -->
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.6" />
+	</ItemGroup>
+	
   <ItemGroup>
     <None Include="..\..\icon.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-    <None Include="..\..\README.md">
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\RELEASES.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>

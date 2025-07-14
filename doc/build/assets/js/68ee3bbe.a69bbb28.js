@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkstatepulse_doc=self.webpackChunkstatepulse_doc||[]).push([[9963],{7833:e=>{e.exports=JSON.parse('{"tag":{"label":"setup","permalink":"/tags/setup","allTagsPath":"/tags","count":1,"items":[{"id":"Setup In Project","title":"Setup In Project","description":"\ud83d\udce6 Installation & Setup","permalink":"/setup-in-project"}],"unlisted":false}}')}}]);

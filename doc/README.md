@@ -1,4 +1,13 @@
-﻿# SwizzleV
+---
+sidebar_position: 1
+---
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
+[![NuGet Version](https://img.shields.io/nuget/v/SwizzleV)](https://www.nuget.org/packages/SwizzleV)
+[![](https://img.shields.io/nuget/dt/SwizzleV?label=Downloads)](https://www.nuget.org/packages/SwizzleV)
+
+
+# SwizzleV
 
 **SwizzleV** is a lightweight and efficient ViewModel caching and factory library for Blazor and modern .NET applications.
 

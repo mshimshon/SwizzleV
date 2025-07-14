@@ -1,28 +1,35 @@
 ﻿using System.Reflection;
-using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 
 namespace SwizzleV.Internal;
-internal class SwizzleHook : ISwizzleHook
+internal partial class SwizzleHook : ISwizzleHook
 {
     private readonly WeakReference<object> _instance;
     private readonly WeakReference<object> _viewModel;
+#if NETSTANDARD2_1_OR_GREATER
 
-    private readonly Func<object, Task> _compiledListener = default!;
-    private readonly MethodInfo _methodListener = default!;
-
+#endif
+    private readonly MethodInfo _methodListener;
+    private readonly Func<object, Task> _compiledListener;
+    public Func<object, Task> GetListener => _compiledListener;
     public WeakReference<object> Instance => _instance;
     public WeakReference<object> ViewModel => _viewModel;
     public object? GetInstance => Instance.TryGetTarget(out var target) ? target : default;
 
     public object? GetViewModel => ViewModel.TryGetTarget(out var target) ? target : default;
 
-    public Func<object, Task> GetListener => _compiledListener;
 
     public SwizzleHook(object instance, object viewModel, Func<Task> listener)
     {
         _methodListener = GetMethodInfoOrThrow(listener);
+#if NETSTANDARD2_1_OR_GREATER
         _compiledListener = CreateDynamicInvoker(_methodListener);
+#else
+        _compiledListener = async (instance) =>
+        {
+            await (Task)_methodListener.Invoke(instance, new object[] { })!;
+        };
+#endif
         _instance = new WeakReference<object>(instance);
         _viewModel = new WeakReference<object>(viewModel);
     }
@@ -36,28 +43,6 @@ internal class SwizzleHook : ISwizzleHook
     {
         _viewModel.TryGetTarget(out var target);
         return (TViewModel?)target;
-    }
-    public static Func<object, Task> CreateDynamicInvoker(MethodInfo method)
-    {
-        var declaringType = method.DeclaringType ?? throw new ArgumentException("Method must have a declaring type");
-
-        var dm = new DynamicMethod(
-            $"__dyn_{method.Name}",
-            typeof(Task),
-            new[] { typeof(object) },
-            declaringType.Module,
-            skipVisibility: true);
-
-        var il = dm.GetILGenerator();
-
-        il.Emit(OpCodes.Ldarg_0);
-        il.Emit(OpCodes.Castclass, declaringType);
-
-        il.EmitCall(OpCodes.Call, method, null);
-
-        il.Emit(OpCodes.Ret);
-
-        return (Func<object, Task>)dm.CreateDelegate(typeof(Func<object, Task>));
     }
     public static MethodInfo GetMethodInfoOrThrow(Func<Task> func)
     {
