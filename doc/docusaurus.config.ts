@@ -42,7 +42,7 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          routeBasePath: '/gs-whatsswizzlev', // Set this value to '/'.
+          routeBasePath: '/', // Set this value to '/'.
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
