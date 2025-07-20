@@ -53,19 +53,23 @@ but to me that is too much boiling plate when you work on large application so h
 
 1. Create a register your view model.
 ```csharp
-internal class ArticleViewModel
+public class Articles : ComponentBase
 {
-    public string Id { set; get; }
-    private readonly ISwizzleViewModel _swizzleViewModel;
+    [Inject] public ISwizzleVFactory SwizzleFactory { get; set; } = default!;
 
-    public ArticleViewModel(ISwizzleViewModel swizzleViewModel)
+    private ArticlesViewModel _viewModel = default!;
+    [Parameter] public List<string> ArticleIds { get; set; } = new();
+    protected override async Task OnInitializedAsync()
     {
-        _swizzleViewModel = swizzleViewModel;
+        // Create or Get Exisintg Hook Binding
+        var articleVMHook = SwizzleFactory
+            .CreateOrGet<ArticlesViewModel>(() => this, ShouldUpdate);
+        // Get View Model Type Instance of the Hook
+        VM = articleVMHook.GetViewModel<ArticlesViewModel>()!;
+        _viewModel.Id = ArticleIds;
+        await _viewModel.LoadAsync();
     }
-
-    public async Task FetchAsync(){
-        await _swizzleViewModel.SpreadChanges(()=>this);
-    }
+    private Task ShouldUpdate() => InvokeAsync(StateHasChanged);
 }
 ```
 ```csharp
