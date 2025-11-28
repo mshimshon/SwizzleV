@@ -1,8 +1,8 @@
 ﻿[![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 [![NuGet Version](https://img.shields.io/nuget/v/SwizzleV)](https://www.nuget.org/packages/SwizzleV)
 [![](https://img.shields.io/nuget/dt/SwizzleV?label=Downloads)](https://www.nuget.org/packages/SwizzleV)
-
-
+[![Build](https://github.com/mshimshon/SwizzleV/actions/workflows/ci.yml/badge.svg)](https://github.com/mshimshon/SwizzleV/actions/workflows/ci.yml)
+[![Deploy](https://github.com/mshimshon/SwizzleV/actions/workflows/deploy.yml/badge.svg)](https://github.com/mshimshon/SwizzleV/actions/workflows/deploy.yml)
 
 # SwizzleV
 
