@@ -20,5 +20,5 @@ jobs:
             9.0.x
             10.0.x
           
-      - run: dotnet restore src\SwizzleV\SwizzleV.csproj
-      - run: dotnet build src\SwizzleV\SwizzleV.sln -c Release --no-restore --verbosity normal
+      - run: dotnet restore src/SwizzleV/SwizzleV.csproj
+      - run: dotnet build src/SwizzleV/SwizzleV.sln -c Release --no-restore --verbosity normal
