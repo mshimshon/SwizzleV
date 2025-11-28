@@ -1,0 +1,43 @@
+name: Deploy
+on:
+  workflow_run:
+    workflows: ["Build"]
+    types:
+      - completed
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  deploy-abstraction:
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' && 
+       github.event.workflow_run.conclusion == 'success' && 
+       github.event.workflow_run.event == 'push' &&
+       startsWith(github.event.workflow_run.head_branch, 'refs/tags/v'))
+    
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: | 
+            8.0.x
+            9.0.x
+            10.0.x
+      
+      - name: Restore dependencies
+        run: |
+          dotnet restore src\SwizzleV\SwizzleV.csproj
+      
+      - name: Build SwizzleV
+        run: dotnet build src\SwizzleV\SwizzleV.sln -c Release --no-restore
+      
+      - name: Pack StatePulse.Net.Abstractions
+        run: dotnet pack src\SwizzleV\SwizzleV.csproj -c Release --no-build -o ./artifacts
+        
+      - name: Push SwizzleV
+        run: dotnet nuget push ./artifacts/SwizzleV.*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
