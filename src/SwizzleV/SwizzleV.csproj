@@ -14,7 +14,7 @@
     <Copyright>Copyright © Maksim Shimshon</Copyright>
     <PackageProjectUrl>https://github.com/mshimshon/SwizzleV</PackageProjectUrl>
     <RepositoryUrl>https://github.com/mshimshon/SwizzleV</RepositoryUrl>
-    <PackageReadmeFile>RELEASES.md</PackageReadmeFile>
+    <PackageReadmeFile>0.Versions.md</PackageReadmeFile>
     <PackageTags>c#, clean-architecture, dependency-injection, blazor, viewmodel, caching, factory, lightweight</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>SwizzleV</PackageId>
@@ -40,6 +40,10 @@
 	</ItemGroup>
 	
   <ItemGroup>
+    <None Include="..\..\doc\docs\0.Versions.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Include="..\..\icon.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
