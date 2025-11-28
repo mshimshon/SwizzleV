@@ -26,7 +26,15 @@ Follows a common-sense semantic versioning pattern:
   - Hotfixes or urgent bug fixes  
   - Safe to upgrade  
   - **No breaking changes**
-   
+  
+
+# v1.0.0
+### ✨ Minor Change
+- Upgraded to .NET 10
+
+### Compatibility
+- Added support for .NET Standard 2.0, Note: 2.0 will have degraded performances due to reflection.
+
 # v0.96
 ### Compatibility
 - Added support for .NET Standard 2.0, Note: 2.0 will have degraded performances due to reflection.
