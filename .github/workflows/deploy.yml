@@ -34,10 +34,10 @@ jobs:
           dotnet restore src\SwizzleV\SwizzleV.csproj
       
       - name: Build SwizzleV
-        run: dotnet build src\SwizzleV\SwizzleV.sln -c Release --no-restore
+        run: dotnet build src/SwizzleV/SwizzleV.sln -c Release --no-restore
       
       - name: Pack StatePulse.Net.Abstractions
-        run: dotnet pack src\SwizzleV\SwizzleV.csproj -c Release --no-build -o ./artifacts
+        run: dotnet pack src/SwizzleV/SwizzleV.csproj -c Release --no-build -o ./artifacts
         
       - name: Push SwizzleV
         run: dotnet nuget push ./artifacts/SwizzleV.*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
