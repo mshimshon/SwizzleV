@@ -36,7 +36,7 @@ jobs:
       - name: Build SwizzleV
         run: dotnet build src/SwizzleV/SwizzleV.sln -c Release --no-restore
       
-      - name: Pack StatePulse.Net.Abstractions
+      - name: Pack SwizzleV
         run: dotnet pack src/SwizzleV/SwizzleV.csproj -c Release --no-build -o ./artifacts
         
       - name: Push SwizzleV
