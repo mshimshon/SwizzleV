@@ -33,7 +33,7 @@ using System.Collections.Generic;
 
 public class Articles : ComponentBase
 {
-    [Inject] public ISwizzleVFactory SwizzleFactory { get; set; } = default!;
+    [Inject] public ISwizzleFactory SwizzleFactory { get; set; } = default!;
 
     private ArticlesViewModel _viewModel = default!;
     [Parameter] public List<string> ArticleIds { get; set; } = new();
@@ -43,7 +43,7 @@ public class Articles : ComponentBase
         var articleVMHook = SwizzleFactory
             .CreateOrGet<ArticlesViewModel>(() => this, ShouldUpdate);
         // Get View Model Type Instance of the Hook
-        VM = articleVMHook.GetViewModel<ArticlesViewModel>()!;
+        _viewModel = articleVMHook.GetViewModel<ArticlesViewModel>()!;
         _viewModel.Id = ArticleIds;
         await _viewModel.LoadAsync();
     }
@@ -120,20 +120,22 @@ using System.Collections.Generic;
 
 public class ArticleCard : ComponentBase
 {
-    [Inject] public ISwizzleVFactory SwizzleFactory { get; set; } = default!;
+    [Inject] public ISwizzleFactory SwizzleFactory { get; set; } = default!;
 
     private ArticleCardViewModel _viewModel = default!;
     [Parameter] public string ArticleId { get; set; } = default!;
     protected override async Task OnInitializedAsync()
     {
         // Create or Get Exisintg Hook Binding
-        var articleVMHook = SwizzleFactory.CreateOrGet<ArticleCardViewModel>(() => this, () => InvokeAsync(() => StateHasChanged()));
+        var articleVMHook = SwizzleFactory.CreateOrGet<ArticleCardViewModel>(() => this, ShouldUpdate);
         // Get View Model Type Instance of the Hook
-        VM = articleVMHook.GetViewModel<ArticleCardViewModel>()!;
+        _viewModel = articleVMHook.GetViewModel<ArticleCardViewModel>()!;
         // Push Down Paramters Used by View Model
         _viewModel.Id = ArticleId;
         await _viewModel.LoadAsync();
     }
+
+    private Task ShouldUpdate() => InvokeAsync(StateHasChanged); 
 }
 
 ```
